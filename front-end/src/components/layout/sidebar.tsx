@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Database } from "lucide-react";
+import { LayoutDashboard, Database, BookOpen } from "lucide-react";
 import clsx from "clsx";
 import styles from "./sidebar.module.css";
 
@@ -27,6 +27,15 @@ export function Sidebar() {
         >
           <Database size={20} />
           <span>Data Management</span>
+        </NavLink>
+        <NavLink
+          to="/attribution"
+          className={({ isActive }) => {
+            return clsx(styles.navItem, isActive && styles.active);
+          }}
+        >
+          <BookOpen size={20} />
+          <span>Attribution</span>
         </NavLink>
       </nav>
     </aside>
