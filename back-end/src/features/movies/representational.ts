@@ -51,8 +51,8 @@ router.get(
     }
 
     const data = await usecase.getDashboardData(
-      parsed.data.startDate,
-      parsed.data.endDate,
+      parsed.data.release_date_start,
+      parsed.data.release_date_end,
     );
     return res.json(data);
   },

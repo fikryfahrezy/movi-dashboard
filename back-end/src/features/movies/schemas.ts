@@ -38,6 +38,6 @@ export const movieListQuerySchema = z.object({
 });
 
 export const dashboardQuerySchema = z.object({
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
+  release_date_start: z.string().optional(),
+  release_date_end: z.string().optional(),
 });

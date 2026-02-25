@@ -72,11 +72,11 @@ export type ListMoviesResult = {
 };
 
 export type DashboardData = {
-  totalMovies: number;
-  topGenre: string;
-  latestMovie: string;
-  genreDistribution: { name: string; value: number }[];
-  moviesByDate: { date: string; count: number }[];
+  total_movies: number;
+  top_genre: string;
+  latest_movie: string;
+  genre_distribution: { name: string; value: number }[];
+  movies_by_date: { date: string; count: number }[];
 };
 
 export type TmdbMovie = {

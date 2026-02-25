@@ -51,22 +51,22 @@ export type SyncLog = {
 };
 
 export type DashboardData = {
-  totalMovies: number;
-  topGenre: string;
-  latestMovie: string;
-  genreDistribution: {
+  total_movies: number;
+  top_genre: string;
+  latest_movie: string;
+  genre_distribution: {
     name: string;
     value: number
   }[];
-  moviesByDate: {
+  movies_by_date: {
     date: string;
     count: number
   }[];
 };
 
 export type DashboardParams = {
-  startDate?: string;
-  endDate?: string;
+  release_date_start?: string;
+  release_date_end?: string;
 };
 
 export type GenresResponse = string[];

@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   PieChart,
   Pie,
@@ -32,23 +33,40 @@ const COLORS = [
 ];
 
 export function Dashboard() {
-  const [startDate, setStartDate] = useState<string>(
-    format(subMonths(new Date(), 12), "yyyy-MM-dd"),
-  );
-  const [endDate, setEndDate] = useState<string>(
-    format(new Date(), "yyyy-MM-dd"),
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data, isLoading, isError } = useGetDashboard({ startDate, endDate });
+  const defaultStart = format(subMonths(new Date(), 1), "yyyy-MM-dd");
+  const defaultEnd = format(new Date(), "yyyy-MM-dd");
+
+  const startDate = searchParams.get("release_date_start") ?? defaultStart;
+  const endDate = searchParams.get("release_date_end") ?? defaultEnd;
+
+  const updateDate = (
+    key: "release_date_start" | "release_date_end",
+    value: string,
+  ) => {
+    const next = new URLSearchParams(searchParams);
+    if (value) {
+      next.set(key, value);
+    } else {
+      next.delete(key);
+    }
+    setSearchParams(next);
+  };
+
+  const { data, isLoading, isError } = useGetDashboard({
+    release_date_start: startDate,
+    release_date_end: endDate,
+  });
 
   const coloredGenreDistribution = useMemo(() => {
-    return (data?.genreDistribution ?? []).map((entry, index) => {
+    return (data?.genre_distribution ?? []).map((entry, index) => {
       return {
         ...entry,
         fill: COLORS[index % COLORS.length],
       };
     });
-  }, [data?.genreDistribution]);
+  }, [data?.genre_distribution]);
 
   return (
     <div className={styles.container}>
@@ -57,19 +75,15 @@ export function Dashboard() {
         <div className={styles.filters}>
           <Input
             type="date"
-            label="Start Date"
+            label="Release Date Start"
             value={startDate}
-            onChange={(e) => {
-              setStartDate(e.target.value);
-            }}
+            onChange={(e) => updateDate("release_date_start", e.target.value)}
           />
           <Input
             type="date"
-            label="End Date"
+            label="Release Date End"
             value={endDate}
-            onChange={(e) => {
-              setEndDate(e.target.value);
-            }}
+            onChange={(e) => updateDate("release_date_end", e.target.value)}
           />
         </div>
       </div>
@@ -83,7 +97,7 @@ export function Dashboard() {
           <CardContent className={styles.summaryCard}>
             <p className={styles.summaryLabel}>Total Data</p>
             <p className={styles.summaryValue}>
-              {isLoading ? "..." : (data?.totalMovies ?? 0)}
+              {isLoading ? "..." : (data?.total_movies ?? 0)}
             </p>
           </CardContent>
         </Card>
@@ -91,7 +105,7 @@ export function Dashboard() {
           <CardContent className={styles.summaryCard}>
             <p className={styles.summaryLabel}>Kategori Terbanyak</p>
             <p className={styles.summaryValue}>
-              {isLoading ? "..." : (data?.topGenre ?? "N/A")}
+              {isLoading ? "..." : (data?.top_genre ?? "N/A")}
             </p>
           </CardContent>
         </Card>
@@ -99,7 +113,7 @@ export function Dashboard() {
           <CardContent className={styles.summaryCard}>
             <p className={styles.summaryLabel}>Data Terbaru</p>
             <p className={styles.summaryValue}>
-              {isLoading ? "..." : (data?.latestMovie ?? "N/A")}
+              {isLoading ? "..." : (data?.latest_movie ?? "N/A")}
             </p>
           </CardContent>
         </Card>
@@ -137,7 +151,7 @@ export function Dashboard() {
           </CardHeader>
           <CardContent className={styles.chartContainer}>
             <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={data?.moviesByDate ?? []}>
+              <BarChart data={data?.movies_by_date ?? []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />

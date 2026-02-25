@@ -84,16 +84,16 @@ export async function getDashboardData(
   ]);
 
   return {
-    totalMovies,
-    topGenre: genreRows[0]?.genre ?? "N/A",
-    latestMovie: latestMovieTitle ?? "N/A",
-    genreDistribution: genreRows.map((r) => {
+    total_movies: totalMovies,
+    top_genre: genreRows[0]?.genre ?? "N/A",
+    latest_movie: latestMovieTitle ?? "N/A",
+    genre_distribution: genreRows.map((r) => {
       return {
         name: r.genre,
         value: Number(r.count),
       };
     }),
-    moviesByDate: dateRows.map((r) => {
+    movies_by_date: dateRows.map((r) => {
       return {
         date: r.date,
         count: Number(r.count),
