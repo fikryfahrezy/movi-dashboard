@@ -9,7 +9,6 @@ const allowedOrigin = process.env.CORS_ORIGIN || "*";
 
 app.use(express.json());
 
-// CORS middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.header("Access-Control-Allow-Origin", allowedOrigin);
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -27,7 +26,6 @@ app.get("/", (_, res) => {
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 app.use("/api/movies", moviesRouter);
 
-// Global error handler
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error("Unhandled error:", err);
   res.status(500).json({ error: "Internal server error" });

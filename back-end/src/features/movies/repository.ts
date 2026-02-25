@@ -194,7 +194,7 @@ export async function upsertMovies(
         ${movie.overview},
         ${movie.voteAverage}
       )
-      ON CONFLICT (external_id) DO UPDATE SET
+      ON CONFLICT (external_id) WHERE external_id != 0 DO UPDATE SET
         title = EXCLUDED.title,
         genre = EXCLUDED.genre,
         release_date = EXCLUDED.release_date,
@@ -205,6 +205,13 @@ export async function upsertMovies(
     upserted++;
   }
   return upserted;
+}
+
+export async function getDistinctGenres(): Promise<string[]> {
+  const rows = await sql<{ genre: string }[]>`
+    SELECT DISTINCT genre FROM movies ORDER BY genre ASC
+  `;
+  return rows.map((r) => r.genre);
 }
 
 export async function getLastSyncLog(): Promise<SyncLog | null> {

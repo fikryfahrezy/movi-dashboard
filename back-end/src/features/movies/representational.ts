@@ -20,7 +20,15 @@ function validationErrorResponse(error: ZodError) {
 
 const router = express.Router();
 
-// GET /movies/sync/last - get last sync info
+router.get(
+  "/genres",
+  /* #swagger.tags = ["Movies"] */
+  async (_req, res) => {
+    const genres = await usecase.getGenres();
+    return res.json(genres);
+  },
+);
+
 router.get(
   "/sync/last",
   /* #swagger.tags = ["Movies"] */
@@ -33,7 +41,6 @@ router.get(
   },
 );
 
-// GET /movies/dashboard - dashboard data
 router.get(
   "/dashboard",
   /* #swagger.tags = ["Movies"] */
@@ -51,7 +58,6 @@ router.get(
   },
 );
 
-// POST /movies/sync - trigger TMDB sync
 router.post(
   "/sync",
   /* #swagger.tags = ["Movies"] */
@@ -62,7 +68,6 @@ router.post(
   },
 );
 
-// GET /movies - list movies
 router.get(
   "/",
   /* #swagger.tags = ["Movies"] */
@@ -77,7 +82,6 @@ router.get(
   },
 );
 
-// GET /movies/:id - get a single movie
 router.get(
   "/:id",
   /* #swagger.tags = ["Movies"] */
@@ -95,7 +99,6 @@ router.get(
   },
 );
 
-// POST /movies - create a movie
 router.post(
   "/",
   /* #swagger.tags = ["Movies"] */
@@ -135,7 +138,6 @@ router.post(
   },
 );
 
-// PUT /movies/:id - update a movie
 router.put(
   "/:id",
   /* #swagger.tags = ["Movies"] */
@@ -182,7 +184,6 @@ router.put(
   },
 );
 
-// DELETE /movies/:id - delete a movie
 router.delete(
   "/:id",
   /* #swagger.tags = ["Movies"] */

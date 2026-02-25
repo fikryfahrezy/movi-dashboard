@@ -11,7 +11,7 @@
     "build": "tsc --build tsconfig.build.json",
     "migrate:build": "esbuild migrate.mjs --platform=node --bundle --format=esm --outfile=dist/migrate.mjs",
     "migrate:up": "node --env-file=./.env run ./migrate.mjs",
-    "swag:gen": "node run swagger.mjs",
+    "swag:gen": "node swagger.mjs",
     "type-check": "tsc --noEmit",
     "prepare": "if [ \"$NODE_ENV\" != 'production' -a \"$CI\" != 'true' ]; then cd .. && husky; fi"
   },
