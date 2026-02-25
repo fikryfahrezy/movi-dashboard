@@ -5,7 +5,7 @@ import moviesRouter from "./features/movies/representational";
 
 const app = express();
 const port = process.env.PORT || 3000;
-const allowedOrigin = process.env.CORS_ORIGIN || "*";
+const allowedOrigin = process.env.CORS_ORIGIN || "";
 
 app.use(express.json());
 

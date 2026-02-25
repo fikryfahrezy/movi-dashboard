@@ -26,7 +26,7 @@ COPY . .
 ENV NODE_ENV=production
 # RUN npm test
 RUN npm run migrate:build
-RUN node swagger.mjs
+RUN npm run swag:gen
 RUN npm run build
 
 # copy production dependencies and source code into final image
@@ -39,7 +39,8 @@ COPY --from=prerelease /usr/src/app/package.json .
 # run the app
 USER node
 
-ENV PORT=3000
+ARG PORT=3000
+ENV PORT=${PORT}
 EXPOSE ${PORT}/tcp
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 CMD curl -f http://localhost:${PORT}/ || exit 1
