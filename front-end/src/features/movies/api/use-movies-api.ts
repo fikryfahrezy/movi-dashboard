@@ -10,6 +10,7 @@ import type {
   CreateMovieRequest,
   DashboardData,
   DashboardParams,
+  GenresResponse,
   ListMoviesParams,
   ListMoviesResponse,
   Movie,
@@ -37,10 +38,22 @@ export const moviesKeys = {
   dashboard: (params: DashboardParams) => {
     return [...moviesKeys.all, "dashboard", params] as const
   },
+  genres: () => {
+    return [...moviesKeys.all, "genres"] as const
+  },
 };
 
-export function useListMovies(
-  params?: ListMoviesParams,
+export function useGetGenres(
+  options?: Omit<UseQueryOptions<GenresResponse, ApiError>, "queryKey" | "queryFn">,
+) {
+  return useQuery({
+    queryKey: moviesKeys.genres(),
+    queryFn: () => moviesApi.getGenres(),
+    staleTime: 1000 * 60 * 5,
+    ...options,
+  });
+}
+export function useListMovies(  params?: ListMoviesParams,
   options?: Omit<
     UseQueryOptions<ListMoviesResponse, ApiError>,
     "queryKey" | "queryFn"

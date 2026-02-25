@@ -116,6 +116,10 @@ class MoviesApiService {
     const qs = params ? this.buildQueryString(params as Record<string, unknown>) : "";
     return this.request<DashboardData>(`/api/movies/dashboard${qs}`);
   }
+
+  async getGenres(): Promise<string[]> {
+    return this.request<string[]>("/api/movies/genres");
+  }
 }
 
 export const moviesApi = new MoviesApiService();

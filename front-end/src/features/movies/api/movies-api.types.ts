@@ -68,3 +68,5 @@ export type DashboardParams = {
   startDate?: string;
   endDate?: string;
 };
+
+export type GenresResponse = string[];

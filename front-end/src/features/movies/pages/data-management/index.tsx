@@ -23,6 +23,7 @@ import {
   useCreateMovie,
   useUpdateMovie,
   useDeleteMovie,
+  useGetGenres,
 } from "../../api/use-movies-api";
 import type { Movie, CreateMovieRequest } from "../../api/movies-api.types";
 import styles from "./styles.module.css";
@@ -46,23 +47,6 @@ const emptyForm: MovieFormData = {
   vote_average: "",
 };
 
-const GENRE_OPTIONS = [
-  { value: "", label: "All Genres" },
-  { value: "Action", label: "Action" },
-  { value: "Adventure", label: "Adventure" },
-  { value: "Animation", label: "Animation" },
-  { value: "Comedy", label: "Comedy" },
-  { value: "Crime", label: "Crime" },
-  { value: "Drama", label: "Drama" },
-  { value: "Fantasy", label: "Fantasy" },
-  { value: "Horror", label: "Horror" },
-  { value: "Mystery", label: "Mystery" },
-  { value: "Romance", label: "Romance" },
-  { value: "Science Fiction", label: "Science Fiction" },
-  { value: "Thriller", label: "Thriller" },
-  { value: "Unknown", label: "Unknown" },
-];
-
 const PAGE_LIMIT = 10;
 
 export function DataManagement() {
@@ -73,8 +57,10 @@ export function DataManagement() {
 
   const searchQuery = searchParams.get("search") || "";
   const filterGenre = searchParams.get("genre") || "";
-  const sortKey = (searchParams.get("sortKey") as SortKey) || "updatedAt";
-  const sortDir = (searchParams.get("sortDir") as "asc" | "desc") || "desc";
+  const rawSortKey = searchParams.get("sortKey") as SortKey | null;
+  const rawSortDir = searchParams.get("sortDir") as "asc" | "desc" | null;
+  const sortKey = rawSortKey ?? "updatedAt";
+  const sortDir = rawSortDir ?? "desc";
   const page = parseInt(searchParams.get("page") || "1", 10);
 
   const updateSearchParams = (updates: Record<string, string | null>) => {
@@ -97,7 +83,6 @@ export function DataManagement() {
     500,
   );
 
-  // --- Queries ---
   const { data: moviesResult, isLoading: moviesLoading } = useListMovies({
     search: searchQuery,
     genre: filterGenre,
@@ -108,8 +93,13 @@ export function DataManagement() {
   });
 
   const { data: lastSyncData } = useGetLastSync();
+  const { data: genresData } = useGetGenres();
 
-  // --- Mutations ---
+  const genreOptions = [
+    { value: "", label: "All Genres" },
+    ...(genresData ?? []).map((g) => ({ value: g, label: g })),
+  ];
+
   const syncMutation = useSyncMovies();
   const createMutation = useCreateMovie();
   const updateMutation = useUpdateMovie();
@@ -124,13 +114,18 @@ export function DataManagement() {
   };
 
   const handleSort = (key: SortKey) => {
-    const newDir = sortKey === key && sortDir === "asc" ? "desc" : "asc";
-    updateSearchParams({ sortKey: key, sortDir: newDir, page: "1" });
+    if (rawSortKey !== key) {
+      updateSearchParams({ sortKey: key, sortDir: "asc", page: "1" });
+    } else if (rawSortDir === "asc") {
+      updateSearchParams({ sortKey: key, sortDir: "desc", page: "1" });
+    } else {
+      updateSearchParams({ sortKey: null, sortDir: null, page: "1" });
+    }
   };
 
   const sortIndicator = (key: SortKey) => {
-    if (sortKey !== key) return null;
-    return sortDir === "asc" ? " ↑" : " ↓";
+    if (rawSortKey !== key) return null;
+    return rawSortDir === "asc" ? " ↑" : " ↓";
   };
 
   const openAddModal = () => {
@@ -238,7 +233,7 @@ export function DataManagement() {
             </div>
             <div className={styles.filterBox}>
               <Select
-                options={GENRE_OPTIONS}
+                options={genreOptions}
                 value={filterGenre}
                 onChange={(e) => {
                   updateSearchParams({ genre: e.target.value, page: "1" });
@@ -282,6 +277,14 @@ export function DataManagement() {
                 >
                   Last Updated{sortIndicator("updatedAt")}
                 </TableHead>
+                <TableHead
+                  onClick={() => {
+                    handleSort("voteAverage");
+                  }}
+                  className={styles.sortable}
+                >
+                  Vote Average{sortIndicator("voteAverage")}
+                </TableHead>
                 <TableHead className={styles.actionsHead}>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -313,6 +316,8 @@ export function DataManagement() {
                           "dd MMM yyyy, HH:mm",
                         )}
                       </TableCell>
+
+                      <TableCell>{movie.vote_average}</TableCell>
                       <TableCell>
                         <div className={styles.rowActions}>
                           <button

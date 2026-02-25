@@ -62,6 +62,10 @@ export async function syncMovies(): Promise<SyncLogResponse> {
   }
 }
 
+export async function getGenres(): Promise<string[]> {
+  return repository.getDistinctGenres();
+}
+
 export async function getLastSync(): Promise<SyncLogResponse | null> {
   const log = await repository.getLastSyncLog();
   if (!log) return null;
