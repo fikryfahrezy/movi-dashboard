@@ -31,8 +31,8 @@ const VALID_SORT_KEYS = [
 export const movieListQuerySchema = z.object({
   search: z.string().optional(),
   genre: z.string().optional(),
-  sortKey: z.enum(VALID_SORT_KEYS).default("updatedAt"),
-  sortDir: z.enum(["asc", "desc"]).default("desc"),
+  sort_key: z.enum(VALID_SORT_KEYS).default("updatedAt"),
+  sort_dir: z.enum(["asc", "desc"]).default("desc"),
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
 });

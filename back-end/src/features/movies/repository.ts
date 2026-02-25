@@ -37,8 +37,8 @@ export async function listMovies(
   const {
     search,
     genre,
-    sortKey = "updatedAt",
-    sortDir = "desc",
+    sort_key: sortKey = "updatedAt",
+    sort_dir: sortDir = "desc",
     page = 1,
     limit = 20,
   } = query;

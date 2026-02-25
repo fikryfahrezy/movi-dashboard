@@ -42,8 +42,8 @@ export function DataManagement() {
 
   const searchQuery = searchParams.get("search") || "";
   const filterGenre = searchParams.get("genre") || "";
-  const rawSortKey = searchParams.get("sortKey") as SortKey | null;
-  const rawSortDir = searchParams.get("sortDir") as "asc" | "desc" | null;
+  const rawSortKey = searchParams.get("sort_key") as SortKey | null;
+  const rawSortDir = searchParams.get("sort_dir") as "asc" | "desc" | null;
   const sortKey = rawSortKey ?? "updatedAt";
   const sortDir = rawSortDir ?? "desc";
   const page = parseInt(searchParams.get("page") || "1", 10);
@@ -71,8 +71,8 @@ export function DataManagement() {
   const { data: moviesResult, isLoading: moviesLoading } = useListMovies({
     search: searchQuery,
     genre: filterGenre,
-    sortKey,
-    sortDir,
+    sort_key: sortKey,
+    sort_dir: sortDir,
     page,
     limit: PAGE_LIMIT,
   });
@@ -103,11 +103,11 @@ export function DataManagement() {
 
   const handleSort = (key: SortKey) => {
     if (rawSortKey !== key) {
-      updateSearchParams({ sortKey: key, sortDir: "asc", page: "1" });
+      updateSearchParams({ sort_key: key, sort_dir: "asc", page: "1" });
     } else if (rawSortDir === "asc") {
-      updateSearchParams({ sortKey: key, sortDir: "desc", page: "1" });
+      updateSearchParams({ sort_key: key, sort_dir: "desc", page: "1" });
     } else {
-      updateSearchParams({ sortKey: null, sortDir: null, page: "1" });
+      updateSearchParams({ sort_key: null, sort_dir: null, page: "1" });
     }
   };
 
