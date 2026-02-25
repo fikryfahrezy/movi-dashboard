@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/layout/layout";
-import { Dashboard } from "./features/movies/pages/dashboard";
+import { Dashboard } from "./pages/dashboard";
 import { DataManagement } from "./features/movies/pages/data-management";
 import { Attribution } from "./pages/attribution";
 import "./App.css";

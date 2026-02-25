@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   PieChart,
   Pie,
-  Cell,
   BarChart,
   Bar,
   XAxis,
@@ -18,9 +17,9 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../../../components/ui/card";
-import { Input } from "../../../../components/ui/input";
-import { useGetDashboard } from "../../api/use-movies-api";
+} from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { useGetDashboard } from "../../features/movies/api/use-movies-api";
 import styles from "./styles.module.css";
 
 const COLORS = [
@@ -41,6 +40,15 @@ export function Dashboard() {
   );
 
   const { data, isLoading, isError } = useGetDashboard({ startDate, endDate });
+
+  const coloredGenreDistribution = useMemo(() => {
+    return (data?.genreDistribution ?? []).map((entry, index) => {
+      return {
+        ...entry,
+        fill: COLORS[index % COLORS.length],
+      };
+    });
+  }, [data?.genreDistribution]);
 
   return (
     <div className={styles.container}>
@@ -103,10 +111,10 @@ export function Dashboard() {
             <CardTitle>Distribusi Kategori (Genre)</CardTitle>
           </CardHeader>
           <CardContent className={styles.chartContainer}>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={350}>
               <PieChart>
                 <Pie
-                  data={data?.genreDistribution ?? []}
+                  data={coloredGenreDistribution}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -114,18 +122,8 @@ export function Dashboard() {
                     `${name} ${(percent * 100).toFixed(0)}%`
                   }
                   outerRadius={120}
-                  fill="#8884d8"
                   dataKey="value"
-                >
-                  {(data?.genreDistribution ?? []).map((_, index) => {
-                    return (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    );
-                  })}
-                </Pie>
+                />
                 <Tooltip />
                 <Legend />
               </PieChart>
@@ -138,7 +136,7 @@ export function Dashboard() {
             <CardTitle>Agregasi Data per Bulan Rilis</CardTitle>
           </CardHeader>
           <CardContent className={styles.chartContainer}>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={350}>
               <BarChart data={data?.moviesByDate ?? []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
