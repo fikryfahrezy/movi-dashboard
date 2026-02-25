@@ -42,7 +42,9 @@ export function Modal({
     <div className={styles.overlay} onClick={onClose}>
       <div
         className={clsx(styles.modal, className)}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
       >
         <div className={styles.header}>
           <h2 className={styles.title}>{title}</h2>

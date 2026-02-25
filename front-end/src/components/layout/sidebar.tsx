@@ -7,7 +7,7 @@ export function Sidebar() {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.logo}>
-        <h2>Data Sync</h2>
+        <h2>Movi DB</h2>
       </div>
       <nav className={styles.nav}>
         <NavLink
