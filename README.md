@@ -1,4 +1,4 @@
-# Data Sync Dashboard
+# Movi Dashboard
 
 - https://movi.fahrezy.work
 - https://movi-api.fahrezy.work
