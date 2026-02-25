@@ -6,6 +6,7 @@ import { Button } from "../../../../components/ui/button";
 import { Input } from "../../../../components/ui/input";
 import { Select } from "../../../../components/ui/select";
 import { Modal } from "../../../../components/ui/modal";
+import { toast } from "../../../../components/ui/toast/toast-store";
 import { useDebouncedInput } from "../../../../hooks/useDebouncedInput";
 import {
   Table,
@@ -26,26 +27,11 @@ import {
   useGetGenres,
 } from "../../api/use-movies-api";
 import type { Movie, CreateMovieRequest } from "../../api/movies-api.types";
+import { type MovieFormValues, MovieForm } from "../../components/movie-form";
 import styles from "./styles.module.css";
 import clsx from "clsx";
 
 type SortKey = "title" | "genre" | "releaseDate" | "voteAverage" | "updatedAt";
-
-type MovieFormData = {
-  title: string;
-  genre: string;
-  release_date: string;
-  overview: string;
-  vote_average: string;
-};
-
-const emptyForm: MovieFormData = {
-  title: "",
-  genre: "",
-  release_date: "",
-  overview: "",
-  vote_average: "",
-};
 
 const PAGE_LIMIT = 10;
 
@@ -53,7 +39,6 @@ export function DataManagement() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
-  const [formData, setFormData] = useState<MovieFormData>(emptyForm);
 
   const searchQuery = searchParams.get("search") || "";
   const filterGenre = searchParams.get("genre") || "";
@@ -110,7 +95,10 @@ export function DataManagement() {
   const totalPages = Math.ceil(total / PAGE_LIMIT);
 
   const handleSync = () => {
-    syncMutation.mutate();
+    syncMutation.mutate(undefined, {
+      onSuccess: () => toast.success("Data synced successfully"),
+      onError: (err) => toast.error(err.message || "Sync failed"),
+    });
   };
 
   const handleSort = (key: SortKey) => {
@@ -129,66 +117,70 @@ export function DataManagement() {
   };
 
   const openAddModal = () => {
-    setFormData(emptyForm);
     setIsAddModalOpen(true);
   };
 
   const openEditModal = (movie: Movie) => {
     setEditingMovie(movie);
-    setFormData({
-      title: movie.title,
-      genre: movie.genre,
-      release_date: movie.release_date
-        ? movie.release_date.substring(0, 10)
-        : "",
-      overview: movie.overview,
-      vote_average: String(movie.vote_average),
-    });
   };
 
   const closeModals = () => {
     setIsAddModalOpen(false);
     setEditingMovie(null);
-    setFormData(emptyForm);
   };
 
-  const handleAddSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddSubmit = (values: MovieFormValues) => {
     const payload: CreateMovieRequest = {
-      title: formData.title,
-      genre: formData.genre,
-      release_date: formData.release_date,
-      overview: formData.overview || undefined,
-      vote_average: formData.vote_average
-        ? parseFloat(formData.vote_average)
+      title: values.title,
+      genre: values.genre,
+      release_date: values.release_date,
+      overview: values.overview || undefined,
+      vote_average: values.vote_average
+        ? parseFloat(values.vote_average)
         : undefined,
     };
-    createMutation.mutate(payload, { onSuccess: closeModals });
+    createMutation.mutate(payload, {
+      onSuccess: () => {
+        closeModals();
+        toast.success("Movie added successfully");
+      },
+      onError: (err) => {
+        toast.error(err.message || "Failed to add movie");
+      },
+    });
   };
 
-  const handleEditSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleEditSubmit = (values: MovieFormValues) => {
     if (!editingMovie) return;
     updateMutation.mutate(
       {
         id: editingMovie.id,
         data: {
-          title: formData.title,
-          genre: formData.genre,
-          release_date: formData.release_date || undefined,
-          overview: formData.overview || undefined,
-          vote_average: formData.vote_average
-            ? parseFloat(formData.vote_average)
+          title: values.title,
+          genre: values.genre,
+          release_date: values.release_date || undefined,
+          overview: values.overview || undefined,
+          vote_average: values.vote_average
+            ? parseFloat(values.vote_average)
             : undefined,
         },
       },
-      { onSuccess: closeModals },
+      {
+        onSuccess: () => {
+          closeModals();
+          toast.success("Movie updated successfully");
+        },
+        onError: (err) => toast.error(err.message || "Failed to update movie"),
+      },
     );
   };
 
   const handleDelete = (id: number) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      deleteMutation.mutate(id);
+      deleteMutation.mutate(id, {
+        onSuccess: () => toast.success("Movie deleted"),
+        onError: (err) => toast.error(err.message || "Failed to delete movie"),
+      });
     }
   };
 
@@ -382,114 +374,37 @@ export function DataManagement() {
         </CardContent>
       </Card>
 
-      {/* Add Modal */}
       <Modal isOpen={isAddModalOpen} onClose={closeModals} title="Add New Data">
-        <form onSubmit={handleAddSubmit} className={styles.form}>
-          <Input
-            label="Title"
-            required
-            value={formData.title}
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
-          />
-          <Input
-            label="Genre"
-            required
-            value={formData.genre}
-            onChange={(e) =>
-              setFormData({ ...formData, genre: e.target.value })
-            }
-          />
-          <Input
-            label="Release Date"
-            type="date"
-            value={formData.release_date}
-            onChange={(e) =>
-              setFormData({ ...formData, release_date: e.target.value })
-            }
-          />
-          <Input
-            label="Overview"
-            value={formData.overview}
-            onChange={(e) =>
-              setFormData({ ...formData, overview: e.target.value })
-            }
-          />
-          <Input
-            label="Vote Average"
-            type="number"
-            value={formData.vote_average}
-            onChange={(e) =>
-              setFormData({ ...formData, vote_average: e.target.value })
-            }
-          />
-          <div className={styles.formActions}>
-            <Button type="button" variant="outline" onClick={closeModals}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
-              {createMutation.isPending ? "Saving..." : "Save"}
-            </Button>
-          </div>
-        </form>
+        <MovieForm
+          onSubmit={handleAddSubmit}
+          isPending={createMutation.isPending}
+          onCancel={closeModals}
+        />
       </Modal>
 
-      {/* Edit Modal */}
       <Modal
         isOpen={editingMovie !== null}
         onClose={closeModals}
         title="Edit Data"
       >
-        <form onSubmit={handleEditSubmit} className={styles.form}>
-          <Input
-            label="Title"
-            required
-            value={formData.title}
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
-          />
-          <Input
-            label="Genre"
-            required
-            value={formData.genre}
-            onChange={(e) =>
-              setFormData({ ...formData, genre: e.target.value })
-            }
-          />
-          <Input
-            label="Release Date"
-            type="date"
-            value={formData.release_date}
-            onChange={(e) =>
-              setFormData({ ...formData, release_date: e.target.value })
-            }
-          />
-          <Input
-            label="Overview"
-            value={formData.overview}
-            onChange={(e) =>
-              setFormData({ ...formData, overview: e.target.value })
-            }
-          />
-          <Input
-            label="Vote Average"
-            type="number"
-            value={formData.vote_average}
-            onChange={(e) =>
-              setFormData({ ...formData, vote_average: e.target.value })
-            }
-          />
-          <div className={styles.formActions}>
-            <Button type="button" variant="outline" onClick={closeModals}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={updateMutation.isPending}>
-              {updateMutation.isPending ? "Saving..." : "Save"}
-            </Button>
-          </div>
-        </form>
+        <MovieForm
+          defaultValues={
+            editingMovie
+              ? {
+                  title: editingMovie.title,
+                  genre: editingMovie.genre,
+                  release_date: editingMovie.release_date
+                    ? editingMovie.release_date.substring(0, 10)
+                    : "",
+                  overview: editingMovie.overview,
+                  vote_average: String(editingMovie.vote_average),
+                }
+              : {}
+          }
+          onSubmit={handleEditSubmit}
+          isPending={updateMutation.isPending}
+          onCancel={closeModals}
+        />
       </Modal>
     </div>
   );
