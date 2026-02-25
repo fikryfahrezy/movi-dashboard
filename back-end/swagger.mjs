@@ -6,7 +6,7 @@ const doc = {
     title: 'AI Support "Triage & Recovery" Hub API',
     description: "Triage & Recovery System API documentation",
   },
-  host: "ticketing-api.fahrezy.work",
+  host: "movi-api.fahrezy.work",
   schemes: ["http", "https"],
   components: {
     securitySchemes: {
