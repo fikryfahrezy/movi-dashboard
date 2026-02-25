@@ -1,0 +1,43 @@
+import { z } from "zod";
+
+export const movieCreateSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  genre: z.string().min(1, "Genre is required"),
+  release_date: z.string().min(1, "Release date is required"),
+  overview: z.string().default(""),
+  vote_average: z.number().min(0).max(10).default(0),
+});
+
+export const movieUpdateSchema = z.object({
+  title: z.string().min(1).optional(),
+  genre: z.string().min(1).optional(),
+  release_date: z.string().optional(),
+  overview: z.string().optional(),
+  vote_average: z.number().min(0).max(10).optional(),
+});
+
+export const movieParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
+
+const VALID_SORT_KEYS = [
+  "title",
+  "genre",
+  "releaseDate",
+  "voteAverage",
+  "updatedAt",
+] as const;
+
+export const movieListQuerySchema = z.object({
+  search: z.string().optional(),
+  genre: z.string().optional(),
+  sortKey: z.enum(VALID_SORT_KEYS).default("updatedAt"),
+  sortDir: z.enum(["asc", "desc"]).default("desc"),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(20),
+});
+
+export const dashboardQuerySchema = z.object({
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+});
