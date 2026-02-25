@@ -1,7 +1,7 @@
 import express, { type Request, type Response, type NextFunction } from "express";
 import * as swaggerUi from "swagger-ui-express";
 import swaggerFile from "../dist/swagger-output.json" with { type: "json" };
-import moviesRouter from "./features/movies/representational.ts";
+import moviesRouter from "./features/movies/representational";
 
 const app = express();
 const port = process.env.PORT || 3000;

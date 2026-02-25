@@ -1,13 +1,13 @@
 import express from "express";
 import { type ZodError, z } from "zod";
-import * as usecase from "./usecase.ts";
+import * as usecase from "./usecase";
 import {
   dashboardQuerySchema,
   movieCreateSchema,
   movieListQuerySchema,
   movieParamsSchema,
   movieUpdateSchema,
-} from "./schemas.ts";
+} from "./schemas";
 
 function validationErrorResponse(error: ZodError) {
   const flattened = z.flattenError(error);

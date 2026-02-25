@@ -1,5 +1,5 @@
-import * as repository from "./repository.ts";
-import { fetchPopularMovies } from "../../lib/tmdb.ts";
+import * as repository from "./repository";
+import { fetchPopularMovies } from "../../lib/tmdb";
 import type {
   DashboardData,
   ListMoviesQuery,
@@ -9,7 +9,7 @@ import type {
   SyncLog,
   SyncLogResponse,
   UpdateMovieInput,
-} from "./types.ts";
+} from "./types";
 
 function toSyncLogResponse(log: SyncLog): SyncLogResponse {
   return {

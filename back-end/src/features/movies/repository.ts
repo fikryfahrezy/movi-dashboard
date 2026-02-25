@@ -1,4 +1,4 @@
-import { sql } from "../../lib/db.ts";
+import { sql } from "../../lib/db";
 import type {
   ListMoviesQuery,
   ListMoviesResult,
@@ -7,7 +7,7 @@ import type {
   NewMovieInput,
   SyncLog,
   UpdateMovieInput,
-} from "./types.ts";
+} from "./types";
 
 const SORT_KEY_MAP: Record<string, string> = {
   title: "title",
@@ -211,7 +211,7 @@ export async function getDistinctGenres(): Promise<string[]> {
   const rows = await sql<{ genre: string }[]>`
     SELECT DISTINCT genre FROM movies ORDER BY genre ASC
   `;
-  return rows.map((r) => r.genre);
+  return rows.map((r: { genre: string }) => r.genre);
 }
 
 export async function getLastSyncLog(): Promise<SyncLog | null> {
