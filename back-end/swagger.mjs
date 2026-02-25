@@ -3,8 +3,8 @@ import swaggerAutogen from "swagger-autogen";
 
 const doc = {
   info: {
-    title: 'AI Support "Triage & Recovery" Hub API',
-    description: "Triage & Recovery System API documentation",
+    title: 'Movi API',
+    description: 'API documentation for Movi application',
   },
   host: "movi-api.fahrezy.work",
   schemes: ["http", "https"],
