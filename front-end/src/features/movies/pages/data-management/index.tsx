@@ -73,7 +73,12 @@ export function DataManagement() {
     500,
   );
 
-  const { data: moviesResult, isLoading: moviesLoading } = useListMovies({
+  const {
+    data: moviesResult,
+    isLoading: moviesLoading,
+    isError: moviesIsError,
+    error: moviesErr,
+  } = useListMovies({
     search: searchQuery,
     genre: filterGenre,
     sort_key: sortKey,
@@ -82,8 +87,16 @@ export function DataManagement() {
     limit: PAGE_LIMIT,
   });
 
-  const { data: lastSyncData } = useGetLastSync();
-  const { data: genresData } = useGetGenres();
+  const {
+    data: lastSyncData,
+    isError: lastSyncIsError,
+    error: lastSyncErr,
+  } = useGetLastSync();
+  const {
+    data: genresData,
+    isError: genresIsError,
+    error: genresErr,
+  } = useGetGenres();
 
   const genreOptions = [
     { value: "", label: "All Genres" },
@@ -199,6 +212,11 @@ export function DataManagement() {
         <div>
           <h1 className={styles.title}>Manajemen Data</h1>
           <p className={styles.subtitle}>Last Sync: {lastSyncText}</p>
+          {lastSyncIsError && (
+            <p className={styles.errorText}>
+              {lastSyncErr?.message || "Failed to load last sync info"}
+            </p>
+          )}
         </div>
         <div className={styles.actions}>
           <Button
@@ -236,6 +254,11 @@ export function DataManagement() {
                   updateSearchParams({ genre: e.target.value, page: "1" });
                 }}
               />
+              {genresIsError && (
+                <p className={styles.errorText}>
+                  {genresErr?.message || "Failed to load genres"}
+                </p>
+              )}
             </div>
           </div>
 
@@ -288,8 +311,16 @@ export function DataManagement() {
             <TableBody>
               {moviesLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className={styles.emptyState}>
+                  <TableCell colSpan={6} className={styles.emptyState}>
                     Loading...
+                  </TableCell>
+                </TableRow>
+              ) : moviesIsError ? (
+                <TableRow>
+                  <TableCell colSpan={6} className={styles.emptyState}>
+                    <p className={styles.errorText}>
+                      {moviesErr?.message || "Failed to load movies"}
+                    </p>
                   </TableCell>
                 </TableRow>
               ) : movies.length > 0 ? (
@@ -343,7 +374,7 @@ export function DataManagement() {
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className={styles.emptyState}>
+                  <TableCell colSpan={6} className={styles.emptyState}>
                     No data found.
                   </TableCell>
                 </TableRow>
