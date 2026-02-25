@@ -31,7 +31,12 @@ import { type MovieFormValues, MovieForm } from "../../components/movie-form";
 import styles from "./styles.module.css";
 import clsx from "clsx";
 
-type SortKey = "title" | "genre" | "releaseDate" | "voteAverage" | "updatedAt";
+type SortKey =
+  | "title"
+  | "genre"
+  | "release_date"
+  | "vote_average"
+  | "updated_at";
 
 const PAGE_LIMIT = 10;
 
@@ -44,7 +49,7 @@ export function DataManagement() {
   const filterGenre = searchParams.get("genre") || "";
   const rawSortKey = searchParams.get("sort_key") as SortKey | null;
   const rawSortDir = searchParams.get("sort_dir") as "asc" | "desc" | null;
-  const sortKey = rawSortKey ?? "updatedAt";
+  const sortKey = rawSortKey ?? "updated_at";
   const sortDir = rawSortDir ?? "desc";
   const page = parseInt(searchParams.get("page") || "1", 10);
 
@@ -255,27 +260,27 @@ export function DataManagement() {
                 </TableHead>
                 <TableHead
                   onClick={() => {
-                    handleSort("releaseDate");
+                    handleSort("release_date");
                   }}
                   className={styles.sortable}
                 >
-                  Release Date{sortIndicator("releaseDate")}
+                  Release Date{sortIndicator("release_date")}
                 </TableHead>
                 <TableHead
                   onClick={() => {
-                    handleSort("updatedAt");
+                    handleSort("updated_at");
                   }}
                   className={styles.sortable}
                 >
-                  Last Updated{sortIndicator("updatedAt")}
+                  Last Updated{sortIndicator("updated_at")}
                 </TableHead>
                 <TableHead
                   onClick={() => {
-                    handleSort("voteAverage");
+                    handleSort("vote_average");
                   }}
                   className={styles.sortable}
                 >
-                  Vote Average{sortIndicator("voteAverage")}
+                  Vote Average{sortIndicator("vote_average")}
                 </TableHead>
                 <TableHead className={styles.actionsHead}>Actions</TableHead>
               </TableRow>

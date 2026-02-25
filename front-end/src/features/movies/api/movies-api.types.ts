@@ -13,7 +13,7 @@ export type Movie = {
 export type ListMoviesParams = {
   search?: string;
   genre?: string;
-  sort_key?: "title" | "genre" | "releaseDate" | "voteAverage" | "updatedAt";
+  sort_key?: "title" | "genre" | "release_date" | "vote_average" | "updated_at";
   sort_dir?: "asc" | "desc";
   page?: number;
   limit?: number;

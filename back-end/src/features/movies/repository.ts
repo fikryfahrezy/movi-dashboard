@@ -12,9 +12,9 @@ import type {
 const SORT_KEY_MAP: Record<string, string> = {
   title: "title",
   genre: "genre",
-  releaseDate: "release_date",
-  voteAverage: "vote_average",
-  updatedAt: "updated_at",
+  release_date: "release_date",
+  vote_average: "vote_average",
+  updated_at: "updated_at",
 };
 
 function toMovieResponse(movie: Movie): MovieResponse {
@@ -37,7 +37,7 @@ export async function listMovies(
   const {
     search,
     genre,
-    sort_key: sortKey = "updatedAt",
+    sort_key: sortKey = "updated_at",
     sort_dir: sortDir = "desc",
     page = 1,
     limit = 20,
