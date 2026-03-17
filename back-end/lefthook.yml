@@ -10,7 +10,6 @@ pre-commit:
       run: npx prettier --write {staged_files}
 
     - root: "back-end/"
-      stage_fixed: true
       glob:
         - "*.html"
         - "*.css"
@@ -21,4 +20,4 @@ pre-commit:
         jobs:
           - run: npx eslint {staged_files}
           - run: npx prettier --write {staged_files}
-      
+            stage_fixed: true
