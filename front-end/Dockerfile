@@ -22,3 +22,6 @@ WORKDIR /app
 
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist /var/www/out
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:80 || exit 1
